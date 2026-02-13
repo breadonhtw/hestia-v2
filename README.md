@@ -1,0 +1,1 @@
+Hestia-v2 aims to empower home-based business (HBB) by assiting in supply-side and demand-side of the business while allowing onwers to have autonomy over their business. We want HBB owners to focus on one thing - creating.
