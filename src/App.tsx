@@ -3,11 +3,12 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useAuthStore } from "./stores/authStore";
 import LoginPage from "./pages/LoginPage";
 import DashboardPage from "./pages/DashboardPage";
+import ProfileCreationPage from "./pages/ProfileCreationPage";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { user, loading } = useAuthStore();
+  const { user, loading, profile, profileLoading } = useAuthStore();
 
-  if (loading) {
+  if (loading || profileLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         Loading…
@@ -17,6 +18,32 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
   if (!user) {
     return <Navigate to="/login" replace />;
+  }
+
+  if (!profile) {
+    return <Navigate to="/profile/create" replace />;
+  }
+
+  return <>{children}</>;
+}
+
+function ProfileRoute({ children }: { children: React.ReactNode }) {
+  const { user, loading, profile, profileLoading } = useAuthStore();
+
+  if (loading || profileLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        Loading…
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (profile) {
+    return <Navigate to="/" replace />;
   }
 
   return <>{children}</>;
@@ -33,7 +60,6 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
     );
   }
 
-  // If already logged in, redirect to dashboard
   if (user) {
     return <Navigate to="/" replace />;
   }
@@ -57,6 +83,14 @@ export default function App() {
             <PublicRoute>
               <LoginPage />
             </PublicRoute>
+          }
+        />
+        <Route
+          path="/profile/create"
+          element={
+            <ProfileRoute>
+              <ProfileCreationPage />
+            </ProfileRoute>
           }
         />
         <Route
